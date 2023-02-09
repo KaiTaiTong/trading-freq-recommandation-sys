@@ -14,3 +14,12 @@ def plot_interpolation_stock_profile(preprocess_log, index=0):
 
     ax.legend()
     plt.show()
+
+
+def plot_gmm_over_distribution(gmm, marginal_profit):
+
+    x = np.linspace(marginal_profit.min(), marginal_profit.max(), 1000).reshape(-1, 1)
+    logprob = gmm.score_samples(x)
+    plt.hist(marginal_profit, bins=50, density=True)
+    plt.plot(x[:, 0], np.exp(logprob), 'r')
+    plt.show()  
