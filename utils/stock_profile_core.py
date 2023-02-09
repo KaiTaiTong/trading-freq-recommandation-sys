@@ -21,7 +21,7 @@ class StockProfile:
 
         # Remove duplicated Date
         self.stock_df.drop_duplicates(subset='Date', keep='first', inplace=True)
-        self.stock_df['Date'] = pd.to_datetime(self.stock_df['Date'])
+        self.stock_df['Date'] = pd.to_datetime(self.stock_df['Date'], format='%d-%m-%Y', dayfirst=True)
         
         first_date, last_date = self.stock_df.iloc[0]['Date'], self.stock_df.iloc[-1]['Date']
 
