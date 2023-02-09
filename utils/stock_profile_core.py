@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from utils.tools import compute_marginal_profit
 
 class StockProfile:
     
@@ -36,6 +37,8 @@ class StockProfile:
         interpo_logs['prior_interpo'] = np.asarray(reinterpolated_df)
 
         # Linear interpolate based on time
-        reinterpolated_df = reinterpolated_df.interpolate('time')
+        self.stock_df = reinterpolated_df.interpolate('time')
         interpo_logs['after_interpo'] = np.asarray(reinterpolated_df)
-
+    
+    def get_marginal_profit_on_n_day_trading(self, trade_window):
+        return compute_marginal_profit(self.stock_df['Open'].flatten(), self.stock_df['Close'].flatten(), trade_window)
