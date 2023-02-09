@@ -40,5 +40,7 @@ class StockProfile:
         self.stock_df = reinterpolated_df.interpolate('time')
         interpo_logs['after_interpo'] = np.asarray(reinterpolated_df)
     
-    def get_marginal_profit_on_n_day_trading(self, trade_window):
-        return compute_marginal_profit(self.stock_df['Open'].flatten(), self.stock_df['Close'].flatten(), trade_window)
+    def get_marginal_profit_on_n_day_trading(self, trade_window, mode='percentage'):
+        return compute_marginal_profit(np.asarray(self.stock_df['Open']).flatten(), 
+                                       np.asarray(self.stock_df['Close']).flatten(),
+                                       trade_window, mode)
