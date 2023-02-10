@@ -4,6 +4,7 @@ Is there an ideal frequency to trade (or hold) stocks as a mom-and-pop investor?
 ### Approach
 #### Dataset
 https://www.kaggle.com/datasets/paultimothymooney/stock-market-data
+
 Place data under directory ```./data/stock_market_data/```
 #### Assumptions
 1. Optimal trading frequency is based on historical record from 1999-2022 purely. That means no other features or attributes are taken into the consideration
