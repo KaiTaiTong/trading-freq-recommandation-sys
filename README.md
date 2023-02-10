@@ -23,9 +23,9 @@ Since traders can trade at any time $T_1$, we need to **model the distribution o
 ### Distribution Modelling
 Here are examples of the marginal profit distribution for a specific stock. 
 
-|            trade window = 10 days             |            trade window = 200 days            |
-| :-------------------------------------------: | :-------------------------------------------: |
-| ![dist1](./docs/source/_static/img/dist1.png) | ![dist2](./docs/source/_static/img/dist2.png) |
+|                     nasdaq/AAL                     |                     sp500/HQ                     |
+| :------------------------------------------------: | :----------------------------------------------: |
+| ![dist1](./docs/source/_static/img/nasdaq_AAL.gif) | ![dist2](./docs/source/_static/img/sp500_HQ.gif) |
 
 We can see clearly that with different size of $\Delta T$, the distribution of our marginal profit also gets changed. This is understandable because if we only do same day trading, we would not expect the stock price to change too much on average, making the standard deviation of the distribution small. On the other hand, if we increase the size of $\Delta T$, we will expect a significant raise or drop in the stock price. 
 
