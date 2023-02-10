@@ -4,6 +4,7 @@ Is there an ideal frequency to trade (or hold) stocks as a mom-and-pop investor?
 ### Approach
 #### Dataset
 https://www.kaggle.com/datasets/paultimothymooney/stock-market-data
+Place data under directory ```./data/stock_market_data/```
 #### Assumptions
 1. Optimal trading frequency is based on historical record from 1999-2022 purely. That means no other features or attributes are taken into the consideration
 2. We assume no inflation rate in our base model. This is a simplificiaton, because theoratically a marginal profit of 10% tomorrow is different from a margianl profit of 10% in 10 years. We will discuss the next step to put inflation rate into consideration in future work
@@ -32,6 +33,15 @@ To model this, one of the best options is Gaussian Mixture Models (GMM) that use
 
 ### Hyperparameter Tuning
 To make this process automated, we use $argmin_nAIC$ (Akaike information criterion). Therefore no cross-validation is required (only have one hyperparameter). We split the train:test ratio as 8:2.
+
+### Setup
+Run the following in a virtual env with python version 3.7.16
+```pip install -r requirements.txt```
+
+#### Training
+All the settings related to training are put under ```configs.yaml```. To train, run 
+```python train.py ```
+
 
 ### Results
 At the end, we take the $\Delta T=3164$ days which has highest probability of largest  profit. This is actually as expected, because most of the time we will have the stock much higher than its starting price after several years. However, we did not consider inflation rate here, so the actual marginal profit when $\Delta T >= 365$ days is smaller than current model reported. To integrate this change, we can make adjustment as $M \leftarrow M/(1+I(t))^{\Delta T}$.
