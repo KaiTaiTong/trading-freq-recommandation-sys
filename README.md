@@ -35,8 +35,8 @@ To model this, one of the best options is Gaussian Mixture Models (GMM) that use
 To make this process automated, we use $argmin_nAIC$ (Akaike information criterion). Therefore no cross-validation is required (only have one hyperparameter). We split the train:test ratio as 8:2.
 
 ### Setup
-Run the following in a virtual env with python version 3.7.16
-```pip install -r requirements.txt```
+* Run in a virtual env with python version 3.7.16. ```pip install -r requirements.txt```
+* Alternatively, you may create a Container using ``` Dockerfile ```
 
 #### Training
 All the settings related to training are put under ```configs.yaml```. To train, run 
