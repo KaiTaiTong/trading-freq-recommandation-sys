@@ -1,6 +1,6 @@
 ## Optimizing Trading Frequency
-Is there an ideal frequency to trade (or hold) stocks as a mom-and-pop investor? It is fairly common for people to do some trading with their money, either out of interest or to try to make a profit, whether trading stocks, indices, commodities, crypto assets, etc. Most proprietary traders have some sort of strategy they follow and many even build simple models to guide their trades. The activity levels of at-home traders also varies from person to person. Some are buying and selling every day (or every hour), while others will buy and hold assets for months or years. But which strategy is generally better? Pick any asset class (or even a particular asset if you prefer) and, using any relevant data, make a recommendation to an at-home trader as to what frequency of trading will give them most reliable returns for that asset.
-
+### Problem Overview
+![problem](./docs/source/_static/img/problems.png)
 ### Approach
 #### Dataset
 https://www.kaggle.com/datasets/paultimothymooney/stock-market-data
@@ -11,6 +11,7 @@ Place data under directory ```./data/stock_market_data/```
 2. We assume no inflation rate in our base model. This is a simplificiaton, because theoratically a marginal profit of 10% tomorrow is different from a margianl profit of 10% in 10 years. We will discuss the next step to put inflation rate into consideration in future work
 3. Recommandation is provided for universal traders. That means not to a specific stock buyer
 4. Minimum frequency is one day
+5. Each trading event is i.i.d
 
 #### Thinking Process
 A typical application to the stock market dataset is to do time series forecasting based on historical record. While it is possible to use ML models like ARIMA and RNN to predict a time window of stock price to further make a suggestion on trade frequency, stock market is highly unpredictable, and seasonality analysis is usually insufficient. We take a completely different  path to solve this problem. 
@@ -22,6 +23,9 @@ Since traders can trade at any time $T_1$, we need to **model the distribution o
 
 
 ### Distribution Modelling
+Histograms of marginal profits of 10 randomly selected stock profile generated from N days trading frequency.
+![static_histo](./docs/source/_static/img/static_histo.png)
+
 Here are examples of the marginal profit distribution for a specific stock. 
 
 |                     nasdaq/AAL                     |                     sp500/HQ                     |
@@ -31,6 +35,8 @@ Here are examples of the marginal profit distribution for a specific stock.
 We can see clearly that with different size of $\Delta T$, the distribution of our marginal profit also gets changed. This is understandable because if we only do same day trading, we would not expect the stock price to change too much on average, making the standard deviation of the distribution small. On the other hand, if we increase the size of $\Delta T$, we will expect a significant raise or drop in the stock price. 
 
 To model this, one of the best options is Gaussian Mixture Models (GMM) that use Expectation-Maximization to find maximum likelihood estimates to fit n Gaussian models. Another reason for me to choose GMM is because we will be fitting GMM on a range of $\Delta T$ for each stock profile, then ensamble all the GMMs to get a weighted average distribution for each $\Delta T$. GMM is very light-weighted (3n parameters, weights, means, covs) and fast, this approach would not be possible otherwise. 
+
+![ensamble](./docs/source/_static/img/ensamble_demo.png)
 
 ### Hyperparameter Tuning
 To make this process automated, we use $argmin_nAIC$ (Akaike information criterion). Therefore no cross-validation is required (only have one hyperparameter). We split the train:test ratio as 8:2.
@@ -47,6 +53,8 @@ All the settings related to training are put under ```configs.yaml```. To train,
 ### Results
 At the end, we take the $\Delta T=3164$ days which has highest probability of largest  profit. This is actually as expected, because most of the time we will have the stock much higher than its starting price after several years. However, we did not consider inflation rate here, so the actual marginal profit when $\Delta T >= 365$ days is smaller than current model reported. To integrate this change, we can make adjustment as $M \leftarrow M/(1+I(t))^{\Delta T}$.
 ![results](./docs/source/_static/img/results.png)
+
+Another thing to note is that we are essentially comparing marginal profit from a same day trading frequency to a 10 year trading frequency, which might not be a fair comparision (depending on the objective). To make a fair comparision is very easy. As we treat every trade event as i.i.d., we can just scale the N day trading marginal profit by a constant value $\Delta T$, so that we are now comparing **marginal profit per day**. Implementation is also simple, we do not need to retrain our GMMs, a constant scale to all random variables will just make $\mu \leftarrow \Delta T\mu$, and $\sigma^2 \leftarrow \Delta T^2\sigma^2$. 
 
 ### Software Product
 We can push this project further to make an end-to-end software product to provide real-time recommandation. New stock profile gets updated and stored in the database, and our GMM models evaluate the performance on new data using metrics, AIC and BIC. If the error terms exceeds a certain threshold, it will trigger a training request to update the models in the database. 
